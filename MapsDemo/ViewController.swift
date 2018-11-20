@@ -12,9 +12,9 @@ import GooglePlaces
 
 class ViewController: UIViewController {
     
-
+    var mapView: GMSMapView?
     override func loadView() {
-        var mapView = GMSMapView()
+         mapView = GMSMapView()
         let camera = GMSCameraPosition.camera(withLatitude: 23.431351, longitude: 85.325879, zoom: 6.0)
       mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
         view = mapView
@@ -41,25 +41,24 @@ func getPolylineRoute(from source: CLLocationCoordinate2D, to destination: CLLoc
             do {
                 if let json : [String:Any] = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [String: Any]{
                     
-                    let routes = json["routes"] as? [Any]
-                    let overview_polyline = routes?[0] as?[String:Any]
-                    let polyString = overview_polyline?["points"] as?String
+                    let preRoutes = json["routes"] as! NSArray
+                    let routes = preRoutes[0] as! NSDictionary
+                    let routeOverviewPolyline:NSDictionary = routes.value(forKey: "overview_polyline") as! NSDictionary
+                    let polyString = routeOverviewPolyline.object(forKey: "points") as! String
                     
-                    //Call this method to draw path on map
-                    self.showPath(polyStr: polyString!)
+                    DispatchQueue.main.async(execute: {
+                        let path = GMSPath(fromEncodedPath: polyString)
+                        let polyline = GMSPolyline(path: path)
+                        polyline.strokeWidth = 5.0
+                        polyline.strokeColor = UIColor.green
+                        polyline.map = self.mapView
+                    })
                 }
-                
             }catch{
                 print("error in JSONSerialization")
             }
         }
     })
     task.resume()
-}
-func showPath(polyStr :String){
-    let path = GMSPath(fromEncodedPath: polyStr)
-    let polyline = GMSPolyline(path: path)
-    polyline.strokeWidth = 3.0
-    //polyline.map = mapView // Your map view
 }
 }
