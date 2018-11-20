@@ -8,6 +8,7 @@
 
 import UIKit
 import GoogleMaps
+import GooglePlaces
 
 class ViewController: UIViewController {
     
@@ -30,7 +31,7 @@ func getPolylineRoute(from source: CLLocationCoordinate2D, to destination: CLLoc
     let config = URLSessionConfiguration.default
     let session = URLSession(configuration: config)
     
-    let url = URL(string: "http://maps.googleapis.com/maps/api/directions/json?origin=\(source.latitude),\(source.longitude)&destination=\(destination.latitude),\(destination.longitude)&sensor=false&mode=driving")!
+    let url = URL(string: "https://maps.googleapis.com/maps/api/directions/json?origin=\(source.latitude),\(source.longitude)&destination=\(destination.latitude),\(destination.longitude)&sensor=false&mode=driving"+"&key=" + "AIzaSyAqD2eTrMdjf2DFqGKQZ4sw9oILyt0xRnQ")!
     
     let task = session.dataTask(with: url, completionHandler: {
         (data, response, error) in
