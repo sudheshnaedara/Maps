@@ -38,8 +38,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate , GMSMapViewDe
     
     func initializeMapVIew() {
         let camera = GMSCameraPosition.camera(withLatitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!, zoom: 5.0)
-        mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
-        view = mapView
+        mapView = GMSMapView.map(withFrame: CGRect(x: 100, y: 100, width: 200, height: 200), camera: camera)
+//        mapView?.center = self.view.center
+        
+        self.view.addSubview(mapView!)
+        
+//        mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
+//   view = mapView
         mapView?.delegate = self
         mapView?.isMyLocationEnabled = true
         let source = GMSMarker()
