@@ -9,23 +9,47 @@
 import UIKit
 import GoogleMaps
 import GooglePlaces
+import CoreLocation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, CLLocationManagerDelegate , GMSMapViewDelegate{
     
+    var locationManager: CLLocationManager!
     var mapView: GMSMapView?
+    var location: CLLocation?
+    
     override func loadView() {
          mapView = GMSMapView()
-        let camera = GMSCameraPosition.camera(withLatitude: 23.431351, longitude: 85.325879, zoom: 6.0)
-      mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
-        view = mapView
-        let marker = GMSMarker()
-        marker.position = CLLocationCoordinate2D(latitude: 23.431351, longitude: 85.325879)
-        let destination = CLLocationCoordinate2D(latitude: 28.617220, longitude: 77.208099)
-        marker.title = "Ranchi, Jharkhand"
-        marker.map = mapView
-        getPolylineRoute(from: marker.position, to: destination)
+        self.view = GMSMapView(frame: UIScreen.main.bounds)
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        initializeTheLocationManager()
+        self.mapView?.isMyLocationEnabled = true
+    }
+    
+    func initializeTheLocationManager() {
+        locationManager = CLLocationManager()
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+    }
+    
+    func initializeMapVIew() {
+        let camera = GMSCameraPosition.camera(withLatitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!, zoom: 5.0)
+        mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
+        view = mapView
+        mapView?.delegate = self
+        mapView?.isMyLocationEnabled = true
+        let source = GMSMarker()
+        let destination = GMSMarker()
+        source.position = CLLocationCoordinate2D(latitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!)
+        destination.position = CLLocationCoordinate2D(latitude: 13.0196, longitude: 77.5968)
+        source.map = mapView
+        destination.map = mapView
+        getPolylineRoute(from: source.position, to: destination.position)
+    }
 func getPolylineRoute(from source: CLLocationCoordinate2D, to destination: CLLocationCoordinate2D){
     
     let config = URLSessionConfiguration.default
@@ -61,4 +85,13 @@ func getPolylineRoute(from source: CLLocationCoordinate2D, to destination: CLLoc
     })
     task.resume()
 }
+    
+
+   func locationManager(_ manager:CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+      location = locations.first
+        let camera = GMSCameraPosition.camera(withLatitude: (location?.coordinate.latitude)!, longitude:(location?.coordinate.longitude)!, zoom:14)
+    initializeMapVIew()
+        mapView?.animate(to: camera)
+        self.locationManager.stopUpdatingLocation()
+    }
 }
