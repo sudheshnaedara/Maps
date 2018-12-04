@@ -16,6 +16,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate , GMSMapViewDe
     var locationManager: CLLocationManager!
     var mapView: GMSMapView?
     var location: CLLocation?
+    let path = GMSMutablePath()
+    var route = GMSPolyline()
+    var isfirstInitial: Bool = false
     
     override func loadView() {
          mapView = GMSMapView()
@@ -25,42 +28,35 @@ class ViewController: UIViewController, CLLocationManagerDelegate , GMSMapViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeTheLocationManager()
-        self.mapView?.isMyLocationEnabled = true
     }
     
     func initializeTheLocationManager() {
         locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.delegate = self
+         locationManager.requestAlwaysAuthorization()
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
     }
     
    
-  
-    
-    func initializeMapVIew(sender: UIButton) {
-        let camera = GMSCameraPosition.camera(withLatitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!, zoom: 5.0)
-        mapView = GMSMapView.map(withFrame: CGRect(x: 100, y: 100, width: 200, height: 200), camera: camera)
-//      mapView?.center = self.view.center
-        
-        self.view.addSubview(mapView!)
-        
-//        mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
-//   view = mapView
+  func initializeMapVIew() {
+        self.mapView?.isMyLocationEnabled = true
+        let camera = GMSCameraPosition.camera(withLatitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!, zoom: 12.0)
+        mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
+        view = mapView
         mapView?.delegate = self
         mapView?.isMyLocationEnabled = true
-        let source = GMSMarker()
-        let destination = GMSMarker()
-        source.position = CLLocationCoordinate2D(latitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!)
-        destination.position = CLLocationCoordinate2D(latitude: 13.0196, longitude: 77.5968)
-        source.map = mapView
-        destination.map = mapView
-        if sender.tag == 1 {
-        }else {
-            print("stopped monitoring ")
-        }
+        mapView?.animate(to: camera)
     }
+     func marker() {
+        let position = CLLocationCoordinate2D(latitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!)
+        let marker = GMSMarker(position: position)
+        marker.tracksViewChanges = true
+        marker.appearAnimation = .pop
+         marker.map = mapView
+    }
+
     
 
   
