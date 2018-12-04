@@ -34,29 +34,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate , GMSMapViewDe
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
-        createButton() 
     }
     
-    func createButton() {
-    let buttonPuzzle:UIButton = UIButton(frame: CGRect(x: 100, y: 400, width: 200, height: 50))
-        buttonPuzzle.backgroundColor = UIColor.green
-        buttonPuzzle.setTitle("Start Location Monitoring", for: UIControlState.normal)
-        buttonPuzzle.addTarget(self, action: #selector(myButtonTapped), for: UIControlEvents.touchUpInside)
-        buttonPuzzle.tag = 1
-    self.view.addSubview(buttonPuzzle)
-}
-    @objc func myButtonTapped(sender:UIButton!) {
-        if sender.tag == 1 {
-            locationManager.startUpdatingLocation()
-            initializeMapVIew(sender: sender)
-            sender.setTitle("Stop Monitoring Location", for: .normal)
-             sender.tag = 2
-        }else {
-            locationManager.stopUpdatingLocation()
-            sender.setTitle("Start Monitoring Location", for: .normal)
-            sender.tag = 1
-        }
-    }
+   
+  
     
     func initializeMapVIew(sender: UIButton) {
         let camera = GMSCameraPosition.camera(withLatitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!, zoom: 5.0)
