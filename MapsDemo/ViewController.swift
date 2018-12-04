@@ -68,7 +68,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate , GMSMapViewDe
     let locationObject = locationsArray.lastObject as? CLLocation
     if (locationObject != nil) {
     self.locationManager.stopUpdatingLocation()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.locationManager.startUpdatingLocation()
                 for coor in locations {
                     self.path.add(CLLocationCoordinate2D(latitude: coor.coordinate.latitude, longitude: coor.coordinate.longitude))
