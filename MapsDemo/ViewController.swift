@@ -57,7 +57,36 @@ class ViewController: UIViewController, CLLocationManagerDelegate , GMSMapViewDe
          marker.map = mapView
     }
 
-    
+     func locationManager(_ manager:CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+      location = locations.first
+    if isfirstInitial == false {
+    initializeMapVIew()
+    self.marker()
+        isfirstInitial = true
+    }
+    let locationsArray = locations as NSArray
+    let locationObject = locationsArray.lastObject as? CLLocation
+    if (locationObject != nil) {
+    self.locationManager.stopUpdatingLocation()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.locationManager.startUpdatingLocation()
+                for coor in locations {
+                    self.path.add(CLLocationCoordinate2D(latitude: coor.coordinate.latitude, longitude: coor.coordinate.longitude))
+                    print("path\(self.path.count())")
+                        }
+                }
+        }
+    route = GMSPolyline.init(path: path)
+    route.strokeWidth = 5.0
+    route.strokeColor = UIColor.green
+    route.geodesic = true
+   route.map = mapView
+    self.view = mapView
+    }
+   
+func locationManager(_manager: CLLocationManager, didFailWithError error: Error) {
+    print(error.localizedDescription)
+}
 
   
 }
